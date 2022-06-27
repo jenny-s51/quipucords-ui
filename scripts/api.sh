@@ -160,7 +160,7 @@ reviewApi()
     docker stop -t 0 $NAME >/dev/null
   fi
 
-  startDB $DB_NAME
+  startDB $DB_NAME true
 
   if [ -z "$(docker ps | grep $NAME)" ]; then
     printf "\n"
