@@ -1,18 +1,18 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { FormField, fieldValidation } from '../formField';
+import { FormGroup, fieldValidation } from '../formGroup';
 
-describe('FormField Component', () => {
+describe('FormGroup Component', () => {
   it('should render a basic component', () => {
     const props = { id: 'test' };
 
     const component = mount(
-      <FormField {...props}>
+      <FormGroup label="test" {...props}>
         <input id="test" type="text" value="" readOnly />
-      </FormField>
+      </FormGroup>
     );
 
-    expect(component.render()).toMatchSnapshot('basic formfield');
+    expect(component.render()).toMatchSnapshot('basic formgroup');
     expect(component.find('label').at(0).render()).toMatchSnapshot('basic label');
   });
 
@@ -24,9 +24,9 @@ describe('FormField Component', () => {
     };
 
     let component = mount(
-      <FormField {...props}>
+      <FormGroup {...props}>
         <input id="test" type="text" value="" readOnly />
-      </FormField>
+      </FormGroup>
     );
 
     expect(component.render()).toMatchSnapshot('string error message');
@@ -34,9 +34,9 @@ describe('FormField Component', () => {
     props.errorMessage = true;
 
     component = mount(
-      <FormField {...props}>
+      <FormGroup {...props}>
         <input id="test" type="text" value="" readOnly />
-      </FormField>
+      </FormGroup>
     );
 
     expect(component.render()).toMatchSnapshot('boolean error message');
@@ -44,9 +44,9 @@ describe('FormField Component', () => {
     props.errorMessage = <span>lorem ipsum</span>;
 
     component = mount(
-      <FormField {...props}>
+      <FormGroup {...props}>
         <input id="test" type="text" value="" readOnly />
-      </FormField>
+      </FormGroup>
     );
 
     expect(component.render()).toMatchSnapshot('node error message');

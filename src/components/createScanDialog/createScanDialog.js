@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, AlertVariant, Button, ButtonVariant, Title } from '@patternfly/react-core';
-import { FieldLevelHelp, Form, Spinner } from 'patternfly-react';
+import { Alert, AlertVariant, Button, ButtonVariant, Form, Title } from '@patternfly/react-core';
+import { Form as Pf3Form, FieldLevelHelp, Spinner } from 'patternfly-react';
 import { Modal } from '../modal/modal';
 import { connect, reduxActions, reduxTypes, store } from '../../redux';
 import { FormState } from '../formState/formState';
-import { FormField, fieldValidation } from '../formField/formField';
+import { FormGroup, fieldValidation } from '../form/formGroup';
+import { TextInput } from '../form/textInput';
 import { TouchSpin } from '../touchspin/touchspin';
 import helpers from '../../common/helpers';
 import apiTypes from '../../constants/apiConstants';
@@ -156,12 +157,12 @@ class CreateScanDialog extends React.Component {
 
     return (
       <React.Fragment>
-        <FormField
+        <FormGroup
           label="Name"
           error={(touched.scanName && errors.scanName) || submitErrorMessages.scanName}
           errorMessage={submitErrorMessages.scanName || 'A scan name is required'}
         >
-          <Form.FormControl
+          <TextInput
             type="text"
             autoFocus
             name="scanName"
@@ -170,9 +171,9 @@ class CreateScanDialog extends React.Component {
             placeholder="Enter a name for the scan"
             onChange={handleOnEvent}
           />
-        </FormField>
-        <FormField label="Sources" error={submitErrorMessages.scanSources} errorMessage={submitErrorMessages.scanName}>
-          <Form.FormControl
+        </FormGroup>
+        <FormGroup label="Sources" error={submitErrorMessages.scanSources} errorMessage={submitErrorMessages.scanName}>
+          <Pf3Form.FormControl
             className="quipucords-form-control"
             componentClass="textarea"
             name="displayScanSources"
@@ -180,7 +181,7 @@ class CreateScanDialog extends React.Component {
             rows={2}
             readOnly
           />
-        </FormField>
+        </FormGroup>
       </React.Fragment>
     );
   }
@@ -189,10 +190,11 @@ class CreateScanDialog extends React.Component {
     const { submitErrorMessages } = this.props;
 
     return (
-      <FormField
+      <FormGroup
         label="Maximum concurrent scans"
         error={submitErrorMessages.scanConcurrency}
         errorMessage={submitErrorMessages.scanConcurrency}
+        helpBlock="Minimum value 1, maximum value 200"
         id="scanConcurrency"
       >
         <TouchSpin
@@ -202,10 +204,7 @@ class CreateScanDialog extends React.Component {
           value={values.scanConcurrency}
           onChange={handleOnEvent}
         />
-        <Form.HelpBlock>
-          <abbr title="Minimum value 1, maximum value 200">1 - 200</abbr>
-        </Form.HelpBlock>
-      </FormField>
+      </FormGroup>
     );
   }
 
@@ -271,26 +270,27 @@ class CreateScanDialog extends React.Component {
 
     return (
       <React.Fragment>
-        <FormField label={scanProductsLabel}>
-          <Form.Checkbox name="jbossEap" checked={checked.jbossEap} onChange={onCheck}>
+        <FormGroup label={scanProductsLabel}>
+          <Pf3Form.Checkbox name="jbossEap" checked={checked.jbossEap} onChange={onCheck}>
             <abbr title="Red Hat JBoss Enterprise Application Platform">JBoss EAP</abbr>
-          </Form.Checkbox>
-          <Form.Checkbox name="jbossFuse" checked={checked.jbossFuse} onChange={onCheck}>
+          </Pf3Form.Checkbox>
+          <Pf3Form.Checkbox name="jbossFuse" checked={checked.jbossFuse} onChange={onCheck}>
             <abbr title="Red Hat Fuse">Fuse</abbr>
-          </Form.Checkbox>
-          <Form.Checkbox name="jbossWs" checked={checked.jbossWs} onChange={onCheck}>
+          </Pf3Form.Checkbox>
+          <Pf3Form.Checkbox name="jbossWs" checked={checked.jbossWs} onChange={onCheck}>
             <abbr title="Red Hat JBoss Web Server">JBoss Web Server</abbr>
-          </Form.Checkbox>
-          <Form.Checkbox name="jbossBrms" checked={checked.jbossBrms} onChange={onCheck}>
+          </Pf3Form.Checkbox>
+          <Pf3Form.Checkbox name="jbossBrms" checked={checked.jbossBrms} onChange={onCheck}>
             <abbr title="Red Hat Decision Manager, formerly Red Hat JBoss BRMS">Decision Manager</abbr>
-          </Form.Checkbox>
-        </FormField>
-        <FormField
+          </Pf3Form.Checkbox>
+        </FormGroup>
+        <FormGroup
           label="Scan&nbsp;alternate directories"
           error={(touched.scanDirectories && errors.scanDirectories) || submitErrorMessages.scanDirectories}
           errorMessage={submitErrorMessages.scanDirectories || `Directories must begin with a root reference (/)`}
+          helpBlock="Default directories are /, /opt, /app, /home, /usr"
         >
-          <Form.FormControl
+          <Pf3Form.FormControl
             disabled={!checked.jbossEap && !checked.jbossFuse && !checked.jbossWs && !checked.jbossBrms}
             componentClass="textarea"
             name="displayScanDirectories"
@@ -300,8 +300,7 @@ class CreateScanDialog extends React.Component {
             placeholder="Optional. Enter values separated by commas"
             onChange={onChangeDirectories}
           />
-          <Form.HelpBlock>Default directories are /, /opt, /app, /home, /usr</Form.HelpBlock>
-        </FormField>
+        </FormGroup>
       </React.Fragment>
     );
   }
@@ -370,7 +369,7 @@ class CreateScanDialog extends React.Component {
             header={<Title headingLevel="h4">Scan</Title>}
             actions={formActions(handleOnSubmit, isValid)}
           >
-            <Form horizontal onSubmit={handleOnSubmit}>
+            <Form isHorizontal onSubmit={handleOnSubmit}>
               {pending && (
                 <React.Fragment>
                   <Spinner loading size="lg" className="blank-slate-pf-icon" />
