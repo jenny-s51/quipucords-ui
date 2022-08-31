@@ -377,12 +377,7 @@ class AddSourceWizardStepTwo extends React.Component {
       case 'network':
         return (
           <FormGroup error={stepTwoErrorMessages.options} errorMessage={stepTwoErrorMessages.options}>
-            <Checkbox
-              name="optionParamiko"
-              checked={checked.optionParamiko || false}
-              inline
-              onChange={handleOnEvent}
-            >
+            <Checkbox name="optionParamiko" checked={checked.optionParamiko || false} inline onChange={handleOnEvent}>
               Connect using Paramiko instead of Open <abbr title="Secure Shell">SSH</abbr>
             </Checkbox>
           </FormGroup>
