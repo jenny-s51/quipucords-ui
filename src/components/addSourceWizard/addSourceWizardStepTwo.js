@@ -8,6 +8,8 @@ import { helpers } from '../../common/helpers';
 import apiTypes from '../../constants/apiConstants';
 import { dictionary, sslProtocolDictionary } from '../../constants/dictionaryConstants';
 import { FormGroup, fieldValidation } from '../form/formGroup';
+import { Checkbox } from '../form/checkbox';
+
 import { FormState } from '../formState/formState';
 import { DropdownSelect, SelectVariant } from '../dropdownSelect/dropdownSelect';
 import { translate } from '../i18n/i18n';
@@ -375,14 +377,14 @@ class AddSourceWizardStepTwo extends React.Component {
       case 'network':
         return (
           <FormGroup error={stepTwoErrorMessages.options} errorMessage={stepTwoErrorMessages.options}>
-            <Pf3Form.Checkbox
+            <Checkbox
               name="optionParamiko"
               checked={checked.optionParamiko || false}
               inline
               onChange={handleOnEvent}
             >
               Connect using Paramiko instead of Open <abbr title="Secure Shell">SSH</abbr>
-            </Pf3Form.Checkbox>
+            </Checkbox>
           </FormGroup>
         );
       case 'vcenter':
@@ -399,7 +401,7 @@ class AddSourceWizardStepTwo extends React.Component {
               />
             </FormGroup>
             <FormGroup error={stepTwoErrorMessages.options} errorMessage={stepTwoErrorMessages.options}>
-              <Pf3Form.Checkbox
+              <Checkbox
                 name="optionSslCert"
                 checked={checked.optionSslCert || false}
                 disabled={checked.optionDisableSsl}
@@ -407,7 +409,7 @@ class AddSourceWizardStepTwo extends React.Component {
                 onChange={handleOnEvent}
               >
                 Verify SSL Certificate
-              </Pf3Form.Checkbox>
+              </Checkbox>
             </FormGroup>
           </React.Fragment>
         );
