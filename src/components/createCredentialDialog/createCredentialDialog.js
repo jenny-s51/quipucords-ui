@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button, ButtonVariant, Title } from '@patternfly/react-core';
-import { Form, Grid } from 'patternfly-react';
+import { Alert, Button, ButtonVariant, Title, Form } from '@patternfly/react-core';
 import { Modal } from '../modal/modal';
 import { connect, reduxActions, reduxTypes, store } from '../../redux';
 import { helpers } from '../../common/helpers';
+import { FormGroup } from '../form/formGroup';
+import { TextInput } from '../form/textInput';
 import { authDictionary, dictionary } from '../../constants/dictionaryConstants';
 import { DropdownSelect } from '../dropdownSelect/dropdownSelect';
 import { translate } from '../i18n/i18n';
@@ -23,14 +24,6 @@ const authenticationTypeOptions = Object.keys(authDictionary).map(type => ({
  * Create or edit a credential.
  */
 class CreateCredentialDialog extends React.Component {
-  static renderFormLabel(label) {
-    return (
-      <Grid.Col componentClass={Form.ControlLabel} sm={5}>
-        {label}
-      </Grid.Col>
-    );
-  }
-
   static validateCredentialName(credentialName) {
     if (!credentialName) {
       return 'You must enter a credential name';
@@ -300,18 +293,18 @@ class CreateCredentialDialog extends React.Component {
     switch (authorizationType) {
       case 'usernamePassword':
         return (
-          <Form.FormGroup validationState={passwordError ? 'error' : null}>
-            {CreateCredentialDialog.renderFormLabel('Password')}
-            <Grid.Col sm={7}>
-              <Form.FormControl
-                type="password"
-                value={password}
-                placeholder="Enter Password"
-                onChange={e => this.onUpdatePassword(e)}
-              />
-              {passwordError && <Form.HelpBlock>{passwordError}</Form.HelpBlock>}
-            </Grid.Col>
-          </Form.FormGroup>
+          <FormGroup
+            label="Password"
+            error={passwordError ? 'error' : null}
+            helperText={passwordError && <Form.HelpBlock>{passwordError}</Form.HelpBlock>}
+          >
+            <TextInput
+              type="password"
+              value={password}
+              placeholder="Enter Password"
+              onChange={e => this.onUpdatePassword(e)}
+            />
+          </FormGroup>
         );
       case 'sshKey':
         if (sshKeyDisabled) {
@@ -320,29 +313,26 @@ class CreateCredentialDialog extends React.Component {
 
         return (
           <React.Fragment>
-            <Form.FormGroup validationState={sskKeyFileError ? 'error' : null}>
-              {CreateCredentialDialog.renderFormLabel('SSH Key File')}
-              <Grid.Col sm={7}>
-                <Form.FormControl
-                  type="text"
-                  value={sshKeyFile}
-                  placeholder="Enter the full path to the SSH key file"
-                  onChange={e => this.onUpdateSshKeyFile(e)}
-                />
-                {sskKeyFileError && <Form.HelpBlock>{sskKeyFileError}</Form.HelpBlock>}
-              </Grid.Col>
-            </Form.FormGroup>
-            <Form.FormGroup>
-              {CreateCredentialDialog.renderFormLabel('Passphrase')}
-              <Grid.Col sm={7}>
-                <Form.FormControl
-                  type="password"
-                  value={passphrase}
-                  placeholder="optional"
-                  onChange={e => this.onUpdatePassphrase(e)}
-                />
-              </Grid.Col>
-            </Form.FormGroup>
+            <FormGroup
+              label="SSH Key File"
+              errorMessage={sskKeyFileError ? 'error' : null}
+              helperText={sskKeyFileError && <Form.HelpBlock>{sskKeyFileError}</Form.HelpBlock>}
+            >
+              <TextInput
+                type="text"
+                value={sshKeyFile}
+                placeholder="Enter the full path to the SSH key file"
+                onChange={e => this.onUpdateSshKeyFile(e)}
+              />
+            </FormGroup>
+            <FormGroup label="Passphrase">
+              <TextInput
+                type="password"
+                value={passphrase}
+                placeholder="optional"
+                onChange={e => this.onUpdatePassphrase(e)}
+              />
+            </FormGroup>
           </React.Fragment>
         );
       default:
@@ -360,40 +350,29 @@ class CreateCredentialDialog extends React.Component {
 
     return (
       <React.Fragment>
-        <Form.FormGroup>
-          {CreateCredentialDialog.renderFormLabel('Become Method')}
-          <Grid.Col sm={7}>
-            <DropdownSelect
-              id="become-method-select"
-              isInline={false}
-              onSelect={this.onSetBecomeMethod}
-              options={becomeMethods}
-              selectedOptions={becomeMethod}
-            />
-          </Grid.Col>
-        </Form.FormGroup>
-        <Form.FormGroup validationState={becomeUserError ? 'error' : null}>
-          {CreateCredentialDialog.renderFormLabel('Become User')}
-          <Grid.Col sm={7}>
-            <Form.FormControl
-              type="text"
-              placeholder="optional"
-              value={becomeUser}
-              onChange={e => this.onUpdateBecomeUser(e)}
-            />
-          </Grid.Col>
-        </Form.FormGroup>
-        <Form.FormGroup>
-          {CreateCredentialDialog.renderFormLabel('Become Password')}
-          <Grid.Col sm={7}>
-            <Form.FormControl
-              type="password"
-              value={becomePassword}
-              placeholder="optional"
-              onChange={e => this.onUpdateBecomePassword(e)}
-            />
-          </Grid.Col>
-        </Form.FormGroup>
+        <FormGroup label="Become Method">
+          <DropdownSelect
+            id="become-method-select"
+            isInline={false}
+            onSelect={this.onSetBecomeMethod}
+            options={becomeMethods}
+            selectedOptions={becomeMethod}
+          />
+        </FormGroup>
+        <FormGroup
+          label={CreateCredentialDialog.renderFormLabel('Become User')}
+          validationState={becomeUserError ? 'error' : null}
+        >
+          <TextInput type="text" placeholder="optional" value={becomeUser} onChange={e => this.onUpdateBecomeUser(e)} />
+        </FormGroup>
+        <FormGroup label="Become Password">
+          <TextInput
+            type="password"
+            value={becomePassword}
+            placeholder="optional"
+            onChange={e => this.onUpdateBecomePassword(e)}
+          />
+        </FormGroup>
       </React.Fragment>
     );
   }
@@ -439,64 +418,56 @@ class CreateCredentialDialog extends React.Component {
           </Button>
         ]}
       >
-        <Grid fluid>
-          {this.renderErrorMessage()}
-          <Form horizontal>
-            <Form.FormGroup>
-              {CreateCredentialDialog.renderFormLabel('Source Type')}
-              <Grid.Col sm={7}>
-                <Form.FormControl
-                  className="quipucords-form-control"
-                  type="text"
-                  readOnly
-                  value={dictionary[credentialType] || ''}
-                />
-              </Grid.Col>
-            </Form.FormGroup>
-            <Form.FormGroup validationState={credentialNameError ? 'error' : null}>
-              {CreateCredentialDialog.renderFormLabel('Credential Name')}
-              <Grid.Col sm={7}>
-                <Form.FormControl
-                  type="text"
-                  className="quipucords-form-control"
-                  placeholder="Enter a name for the credential"
-                  autoFocus={!edit}
-                  value={credentialName}
-                  onChange={e => this.onUpdateCredentialName(e)}
-                />
-                {credentialNameError && <Form.HelpBlock>{credentialNameError}</Form.HelpBlock>}
-              </Grid.Col>
-            </Form.FormGroup>
-            {!sshKeyDisabled && (
-              <Form.FormGroup>
-                {CreateCredentialDialog.renderFormLabel('Authentication Type')}
-                <Grid.Col sm={7}>
-                  <DropdownSelect
-                    id="auth-type-select"
-                    isInline={false}
-                    onSelect={this.onSetAuthType}
-                    options={authenticationTypeOptions}
-                    selectedOptions={authorizationType}
-                  />
-                </Grid.Col>
-              </Form.FormGroup>
-            )}
-            <Form.FormGroup validationState={usernameError ? 'error' : null}>
-              {CreateCredentialDialog.renderFormLabel('Username')}
-              <Grid.Col sm={7}>
-                <Form.FormControl
-                  type="text"
-                  placeholder="Enter Username"
-                  value={username}
-                  onChange={e => this.onUpdateUsername(e)}
-                />
-                {usernameError && <Form.HelpBlock>{usernameError}</Form.HelpBlock>}
-              </Grid.Col>
-            </Form.FormGroup>
-            {this.renderAuthForm()}
-            {this.renderNetworkForm()}
-          </Form>
-        </Grid>
+        {this.renderErrorMessage()}
+        <Form isHorizontal>
+          <FormGroup label="Source Type">
+            <TextInput
+              className="quipucords-form-control"
+              type="text"
+              readOnly
+              value={dictionary[credentialType] || ''}
+            />
+          </FormGroup>
+          <FormGroup
+            label="Credential Name"
+            error={credentialNameError ? 'error' : null}
+            helperText={credentialNameError && <Form.HelpBlock>{credentialNameError}</Form.HelpBlock>}
+          >
+            <TextInput
+              type="text"
+              className="quipucords-form-control"
+              placeholder="Enter a name for the credential"
+              autoFocus={!edit}
+              value={credentialName}
+              onChange={e => this.onUpdateCredentialName(e)}
+            />
+          </FormGroup>
+          {!sshKeyDisabled && (
+            <FormGroup label="Authentication Type">
+              <DropdownSelect
+                id="auth-type-select"
+                isInline={false}
+                onSelect={this.onSetAuthType}
+                options={authenticationTypeOptions}
+                selectedOptions={authorizationType}
+              />
+            </FormGroup>
+          )}
+          <FormGroup
+            label="Username"
+            error={usernameError ? 'error' : null}
+            helperText={usernameError && <Form.HelpBlock>{usernameError}</Form.HelpBlock>}
+          >
+            <TextInput
+              type="text"
+              placeholder="Enter Username"
+              value={username}
+              onChange={e => this.onUpdateUsername(e)}
+            />
+          </FormGroup>
+          {this.renderAuthForm()}
+          {this.renderNetworkForm()}
+        </Form>
       </Modal>
     );
   }
