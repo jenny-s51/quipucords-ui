@@ -76,7 +76,7 @@ class CreateCredentialDialog extends React.Component {
     becomePassword: '',
     credentialNameError: '',
     usernameError: '',
-    sskKeyFileError: '',
+    sshKeyFileError: '',
     becomeUserError: '',
     sshKeyDisabled: false
   };
@@ -192,7 +192,7 @@ class CreateCredentialDialog extends React.Component {
   onUpdateSshKeyFile = event => {
     this.setState({
       sshKeyFile: event.target.value,
-      sskKeyFileError: CreateCredentialDialog.validateSshKeyFile(event.target.value)
+      sshKeyFileError: CreateCredentialDialog.validateSshKeyFile(event.target.value)
     });
   };
 
@@ -247,7 +247,7 @@ class CreateCredentialDialog extends React.Component {
         becomePassword: nextProps.credential.become_password,
         credentialNameError: '',
         usernameError: '',
-        sskKeyFileError: '',
+        sshKeyFileError: '',
         becomeUserError: '',
         sshKeyDisabled
       });
@@ -274,7 +274,7 @@ class CreateCredentialDialog extends React.Component {
       password,
       passwordError,
       sshKeyFile,
-      sskKeyFileError
+      sshKeyFileError
     } = this.state;
 
     return (
@@ -282,22 +282,18 @@ class CreateCredentialDialog extends React.Component {
       !credentialNameError &&
       username &&
       !usernameError &&
-      (authorizationType === 'usernamePassword' ? password && !passwordError : sshKeyFile && !sskKeyFileError)
+      (authorizationType === 'usernamePassword' ? password && !passwordError : sshKeyFile && !sshKeyFileError)
     );
   }
 
   renderAuthForm() {
-    const { authorizationType, password, sshKeyFile, passphrase, passwordError, sskKeyFileError, sshKeyDisabled } =
+    const { authorizationType, password, sshKeyFile, passphrase, passwordError, sshKeyFileError, sshKeyDisabled } =
       this.state;
 
     switch (authorizationType) {
       case 'usernamePassword':
         return (
-          <FormGroup
-            label="Password"
-            error={passwordError ? 'error' : null}
-            helperText={passwordError && <Form.HelpBlock>{passwordError}</Form.HelpBlock>}
-          >
+          <FormGroup label="Password" error={passwordError ? 'error' : null} errorMessage={passwordError}>
             <TextInput
               type="password"
               value={password}
@@ -313,11 +309,7 @@ class CreateCredentialDialog extends React.Component {
 
         return (
           <React.Fragment>
-            <FormGroup
-              label="SSH Key File"
-              errorMessage={sskKeyFileError ? 'error' : null}
-              helperText={sskKeyFileError && <Form.HelpBlock>{sskKeyFileError}</Form.HelpBlock>}
-            >
+            <FormGroup label="SSH Key File" error={sshKeyFileError ? 'error' : null} errorMessage={sshKeyFileError}>
               <TextInput
                 type="text"
                 value={sshKeyFile}
@@ -359,10 +351,7 @@ class CreateCredentialDialog extends React.Component {
             selectedOptions={becomeMethod}
           />
         </FormGroup>
-        <FormGroup
-          label={CreateCredentialDialog.renderFormLabel('Become User')}
-          validationState={becomeUserError ? 'error' : null}
-        >
+        <FormGroup label="Become User" validationState={becomeUserError ? 'error' : null}>
           <TextInput type="text" placeholder="optional" value={becomeUser} onChange={e => this.onUpdateBecomeUser(e)} />
         </FormGroup>
         <FormGroup label="Become Password">
