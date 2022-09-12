@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button, ButtonVariant, Title, Form } from '@patternfly/react-core';
+import { Alert, Button, ButtonVariant, Title, Form, ModalVariant } from '@patternfly/react-core';
 import { Modal } from '../modal/modal';
 import { connect, reduxActions, reduxTypes, store } from '../../redux';
 import { helpers } from '../../common/helpers';
@@ -398,6 +398,7 @@ class CreateCredentialDialog extends React.Component {
         showClose
         onClose={this.onCancel}
         header={<Title headingLevel="h4">{edit ? `View Credential - ${credentialName}` : 'Add Credential'}</Title>}
+        variant={ModalVariant.small}
         actions={[
           <Button key="save" onClick={this.onSave} isDisabled={!this.validateForm()}>
             {t('form-dialog.label', { context: ['submit', 'create-credential'] })}
